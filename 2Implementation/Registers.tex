@@ -1,0 +1,34 @@
+\subsection{Registers: CPU}
+\label{sec:registersCPU}
+For both solution 1 and solution 2, the CPU makes use of the following registers:
+
+\begin{itemize}
+    \item \texttt{R0}: Contains the value 0, and is never changed.\footnote{R0 is actually a pseudo register, as explained in A2 section 3.1.} 
+    \item \texttt{R1}: Not used.\footnote{In A2, R1 contained the loop index for the circular array in external memory.}
+    \item \texttt{R2}: Not used.\footnote{In A2, R2 contained the current sum of all elements in the circular array.}
+    \item \texttt{R3}: Not used.\footnote{In A2, R3 contained the result after filtering.}
+    \item \texttt{R4}: Not used.\footnote{We freed up R4 already in A2, see A2 section 3.1.}
+    \item \texttt{R5}: Contains the result from Co-P, i.e. the filtered value.
+    \item \texttt{R6}: Contains the new value loaded from data list in memory.
+    \item \texttt{R7}: Contains the address to load from and save to in memory.
+\end{itemize}
+
+\subsection{Registers: Co-P}
+\label{sec:registersCoP}
+The registers used by the Co-P in solution 1 and solution 2 are almost identical.
+
+\begin{itemize}
+    \item \texttt{C00}: Contains the newest data value, received from CPU. In Solution 1, Co-P receives the value through the BUS. In solution 2, Co-P receives the value through a direct connection.
+    \item \texttt{C01} - \texttt{C31}: Contains the remaining unfiltered data values.
+    \item \texttt{datainr}: Contains the new data value. Will be stored in \texttt{C00}.
+       \item \texttt{SUMr}: Contains the current sum of the previous 32 unfiltered values. 
+    \item \texttt{dataoutr}: Contains the filtered data value, to be sent to CPU (through BUS or directly).
+    \item \texttt{dataoutrdyr} (solution 1 only): When this register contains 1, it triggers the action \texttt{sendValue}, telling the BUS that Co-P has completed the filtering, and that BUS should send the value to CPU.
+    \item \texttt{CO\_readyr} (solution 2 only): The signal is 0 if Co-P is computing, 1 if the Co-P is idle. When it has the value 1, the CPU knows that Co-P is ready to swap data values.
+
+\end{itemize}
+
+\textbf{Time saved:} Storing the circular array in internal registers, rather than in external memory. This saves many of the BUS tours which took up most of the "computation time" in our A2 processor. \\
+
+\textbf{"Circular array" is no longer circular:} Using the term "circular array" may be misleading in or A3 solutions, since we no longer keep a pointer circulating through the registers.
+Instead we chose the quick but energy-consuming solution of updating all 32 every simultaneously, as explained in \ref{sec:implementation1}. Keeping in mind that our main goal in A3 was to reduce computation time.

@@ -1,0 +1,55 @@
+% Kort konklusion på opgaven. Hvad kunne betale sig at lave som en dedikeret hardware løsning?\\
+
+\textbf{Design:} In section \ref{sec:design}, we presented two approaches to implementing a co-processor to carry out the MWI filter, while focusing on speed. Approach 1 was connecting the co-processor to the bus. Approach 2 was linking the CPU and co-processor directly. Each approach needed only one additional CPU-instruction, compared to the processor in A2.\\
+
+\textbf{Implementation:} In section \ref{sec:implementation}, we implemented the two designs behaviorally. The registers used by the CPU and co-processor differed greatly from the A2 processor, but we argued that both could be physically implemented by re-purposing the A2 processor. To visualize the implementations, we made use of FSM diagrams, and  interaction pattern diagrams. \\
+
+\textbf{Results:} In section \ref{sec:results}, we concluded that the four implementations covered in assignments A1, A2, and A3 yield the same filtered data points: The software solution in C (A1), the customized processor in Gezel (A2), and the two co-processor solutions in Gezel (A3) produce the same values. Hence it is possible to implement the moving window integration filter in a dedicated hardware solution as a co-processor.\\
+
+\textbf{Performance:} In section \ref{sec:performanceSpeed} through \ref{sec:performanceDiscussion}, we compared our A3 solutions and A2 solution. Solution 2 (CPU and co-processor linked) was the clear winner, compared both to solution 1 (Co-processor on bus), and the customized processor in A2. It used fewer cycles; we estimated the computation time was below half, compared to A2. It used fewer toggles; we estimated a 30 \% reduction in energy use. We argued why the clock cycle may even be shorter.\\
+
+Overall, we conclude that it is reasonable to implement the moving window integration filter as a dedicated hardware as a co-processor. The product management expectations have been met: the co-processor yielded a better performance, in terms of speed and energy use.
+
+\subsection{Discussion}
+
+\textbf{Area:} When implementing the MWI filter as a hardware solution in a co-processor, we suddenly required two processors: a CPU and a co-processor. In section \ref{sec:structuralOrBehavioralImplementation}, we argued that we simply re-purposed the customized processor, which was designed and implemented in A2, but with minor modifications: a direct link between each processor, connected through their respective \texttt{SHUTTLE} components\footnote{For details about the \texttt{SHUTTLE}, see A2 section 3.3.}, and  approximately 32 additional registers.
+However, in a real device we could consider removing unneeded components before fabricating.\\
+
+\textbf{Amdahl's law: was it worth it?} In A2 section 4.4, we investigated in detail how speeding up the MWI filter computation by a factor $s_v = 25$  lead to speeding up the entire ECG program by a factor $s_t = 1.92$. For $s_v \rightarrow \infty$, $s_t$ asymptotically approached 2. \\
+
+A3 solution 3 cuts the MWI computation time in half, so now $s_v = 2\cdot 25 = 50$. If we reuse $r=0.5$ (as in A2 section 4.4), we can estimate the total speedup of A3 solution 2 using Amdahl's law:
+\begin{equation}
+    s_t = \frac{s_v}{1+(s_v-1) \cdot r} = \frac{50}{1+(50-1) \cdot 0.5} = 1.96
+\end{equation}
+
+So the hardware co-processor solution is estimated to 1.96 times faster than the software solution in C. As we argued in A2 section 5.1, we could probably have achieved a similar speedup in C by improving each filter slightly. This is similar to the anecdote in the lecture about the guy who sped up one part of his device by a huge factor, but neglected the others. Amdahl's law reminds us not to focus solely on one segment of the program.\\
+
+\textbf{All the filters in parallel:}
+In A1, we discovered that 66 \% of the computation time in C was spent on applying the filters.\footnote{For details, see A1 section 4.2.} If we distribute the computation so that each filter was applied by separate co-processors, all working in parallel, what is the best-case speedup? Assuming we improve all filters simultaneously, $r= 1 - 0.66 = 0.34$. For $s_v \rightarrow \infty$, $s_t$ approaches\footnote{The calculation is similar to what we did in A2 section 4.4.}
+\begin{equation}
+    s_t = \frac{s_v}{1+(s_v-1) \cdot r} \rightarrow \frac{s_v}{s_v \cdot r} = \frac{1}{r} \approx 3
+\end{equation}
+So at best, the entire ECG program can be sped up by a factor 3 by improving the filters.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{4Conclusion/ALLfilters.png}
+    \caption{Applying all filters in parallel would likely lead to a significant total speedup.}
+    \label{fig:ALLfilters}
+\end{figure}
+
+
+\subsection{Perspective}
+In the DTU course \texttt{02131 Embedded Systems}, we have pretended to be engineers at the fictive company \texttt{Medembed}.\\
+
+Throughout the project with the three assignments, we have determined that the Pan-Thompkins QRS detection algorithm could be used for a wearable ElectroCardioGram (ECG) scanner.\\
+
+In A1, we implemented the algorithm in C, in a familiar software setting.\\
+In A2, we implemented one of the filters in hardware through the unfamiliar Gezel language.\\
+In A3, we learned how to move a computation to a co-processor.\\
+
+While the speedup gained from changing the software solution in A1 to the hardware solution in A3 was only estimated to be 1.96, we gained valuable experience with the tools needed to design and implement hardware solutions.\\
+
+\textbf{Team contract:} As mentioned in our team contract, we are both new students in BSc Software Engineering, having switched from physics September 2016. We fulfilled the expectations in the contract: We attended all lectures in course 02131, spent many evenings on DTU working on the assignments, brought plenty food and coffee, and maintained our group log (named Captain's Logbook) on Google Sheets to stay on track. \\ 
+
+The course has been an overall positive learning curve. 

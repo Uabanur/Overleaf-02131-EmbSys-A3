@@ -1,0 +1,13 @@
+\vspace*{1cm}
+\section{Introduction}\label{sec:introduction}
+In the DTU course \texttt{02131 Embedded Systems}, we continue to pretend to be engineers at the fictive company \texttt{Medembed}.\\
+ 
+At \texttt{Medembed}, we are now asked to implement \underline{parts} of the ECG scanner as a dedicated hardware using a  \underline{co}-processor, rather than implementing the entire functionality as one processor. The product management expects this approach to give the device a better performance, in terms of speed and/or energy use.\\
+
+In this assignment, we will test this hypothesis by implementing a co-processor to handle the moving window integration (MWI) filter. \\
+
+\textbf{Goal in A3:} We ended A2 with an optimized processor that could implement the MWI filter in hardware much faster than our software solution. The main issue was that CPU spent most of the time waiting for the bus. Hence in A3, our main goal is to reduce this waiting time by moving the computation to a co-processor. \\
+
+Continuing from now on, the co-processor will be referred to as Co-P. 
+
+% \vfill

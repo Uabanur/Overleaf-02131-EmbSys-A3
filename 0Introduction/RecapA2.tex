@@ -1,0 +1,14 @@
+\subsection{Recap from A2}
+
+\textbf{Proof-of-concept:} In A2, we provided proof-of-concept of how the QRS algorithm could be implemented in a customized processor. We concluded that the moving window integration (MWI) filter could be implemented in hardware.\\
+
+\textbf{Optimization:} We customized the processor to improve performance: In order to avoid division, we changed the number of data points to average over from $N = 30$ to $N = 32$. We examined the consequences from changing the template in C in A2 section 3.4 (Consequences) and A2 appendix 6.1 (Comparing peaks). The change did not cause any loss of information; the same Rpeaks are found, and at similar iteration counts.\\
+
+\textbf{C vs. Gezel:} We compared the results from the software implementation in C (using $N=32$) to the hardware implementation in Gezel in A2 section 4.1. The data points matched up perfectly, i.e. the 250 sets of filtered data points (C vs. Gezel) differed by 0.\\
+
+\textbf{Instruction set:} Since the QRS algorithm only includes division by powers of two (32 and 8), the processor can handle the entire QRS algorithm without regular division. Hence the instruction set in A2 did not include division.\\
+
+\textbf{Performance (speed):} We concluded from the GTKWave data flow analysis in A2 section 4.3 that the bottleneck in our implementation was the bus. The CPU spent most of the ”computation time” stalling and waiting for the bus to finish communicating with the external memory. \\
+However, the hardware implementation was still a success. We estimated in A2 section 4.4 Amdahl's law that the entire ECG program was sped up by a factor $\approx 1.92$ by implementing MWI filter in hardware, using the optimized processor.\\
+
+\textbf{Performance (area):} Using the built-in tools in Gezel, we estimated the overall bit size to 480 bits. The total activity (number of bits flipped) for handing the 250 data points was $\approx 1.68 \cdot 10^5$ for signals, and $\approx 1.03 \cdot 10^5$ for registers. While we found it difficult to compare the energy use between A1 and A2, we intend to compare the activities between A2 and A3 using the built-in tools in Gezel.
